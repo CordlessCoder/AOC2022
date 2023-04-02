@@ -1,12 +1,17 @@
 use std::fs;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use day6;
+use day8;
 
 pub fn criterion_benchmark(c: &mut Criterion) {
     let input = fs::read_to_string("input").unwrap();
-    c.bench_function("4 char", |b| {
-        b.iter(|| day6::find_start(black_box(&input), black_box(4)))
+    c.bench_function("parse", |b| b.iter(|| day8::parse(black_box(&input))));
+    let parsed = day8::parse(&input);
+    c.bench_function("solve", |b| {
+        b.iter(|| day8::solve_parsed(black_box(parsed)))
+    });
+    c.bench_function("parse and solve", |b| {
+        b.iter(|| day8::solve(black_box(&input)))
     });
 
     // c.bench_function("benny: 4 char", |b| {
@@ -16,9 +21,6 @@ pub fn criterion_benchmark(c: &mut Criterion) {
     // c.bench_function("kappa: 4 char", |b| {
     //     b.iter(|| day6::kappa(black_box(&input), black_box(4)))
     // });
-    c.bench_function("14 char", |b| {
-        b.iter(|| day6::find_start(black_box(&input), black_box(14)))
-    });
     // c.bench_function("b3nny: 14 char", |b| {
     //     b.iter(|| day6::b3nny_solve(black_box(&input), black_box(14)))
     // });

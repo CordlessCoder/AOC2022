@@ -1,12 +1,38 @@
 pub fn find_start(input: &str, length: usize) -> Option<usize> {
-    let Some((i, _)) = input[0..input.len() - 1]
-        .as_bytes()
-        .windows(length)
-        .enumerate()
-        .find(|(_, x)| x.iter().enumerate().all(|(i, y)| !x[i + 1..].contains(&y))) else {
-            return None
-    };
-    Some(i)
+    let input = &input[..input.len() - 1].as_bytes();
+    let mut counter = 0b0000u32;
+    input
+        .iter()
+        .take(length - 1)
+        .for_each(|c| counter ^= 1 << (c - b'a')); // Setting up the counter for the first `len` chars
+    input.windows(length).position(|t| {
+        let head = t[length - 1];
+        let tail = t[0];
+        counter ^= 1 << (head - b'a');
+        let res = counter.count_ones() == length as u32;
+        counter ^= 1 << (tail - b'a');
+        res
+    })
+}
+
+pub fn b3nny_solve(i: &str, num: usize) -> usize {
+    let i = i.as_bytes();
+
+    let mut filter = 0u32;
+    i.iter()
+        .take(num - 1)
+        .for_each(|c| filter ^= 1 << (c - b'a'));
+    i.windows(num)
+        .position(|w| {
+            let first = w[0];
+            let last = w[w.len() - 1];
+            filter ^= 1 << (last - b'a');
+            let res = filter.count_ones() == num as _;
+            filter ^= 1 << (first - b'a');
+            res
+        })
+        .map(|x| x + num)
+        .unwrap()
 }
 
 pub fn kappa(input: &str, length: usize) -> Option<usize> {
