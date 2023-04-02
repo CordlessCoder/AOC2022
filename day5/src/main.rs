@@ -1,4 +1,3 @@
-#![feature(iter_array_chunks)]
 use std::{fs::File, io::Read};
 
 fn main() {
